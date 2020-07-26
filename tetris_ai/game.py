@@ -296,7 +296,6 @@ clock = pygame.time.Clock()
 fps = 25
 game = Tetris(20, 10)
 counter = 0
-pressing_down = False
 
 decider = KeyboardAction()
 applier = ActionApplier()
