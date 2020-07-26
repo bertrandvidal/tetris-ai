@@ -275,8 +275,7 @@ class KeyboardAction(ActionDecider):
                     actions.append(Actions.RIGHT)
                 if event.key == pygame.K_SPACE:
                     actions.append(Actions.SPACE)
-                if event.key == pygame.QUIT:
-                    print("YOU ARE PRESSING ESCAPE!")
+                if event.key == pygame.K_ESCAPE:
                     actions = [Actions.QUIT]
         return actions
 
