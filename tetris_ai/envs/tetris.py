@@ -1,4 +1,5 @@
 import gym
+from gym import spaces
 from tetris_ai.game import *
 
 class TetrisEnv(gym.Env):
@@ -10,7 +11,10 @@ class TetrisEnv(gym.Env):
     counter = 0
 
     def __init__(self):
-        pass
+        self.observation_space = None
+        self.action_space = spaces.Discrete(max([action.value for action in
+                                                 Actions if action not in
+                                                 [Actions.QUIT, Actions.SPACE]]))
 
     def step(self, action):
         self.counter += 1

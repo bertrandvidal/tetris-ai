@@ -246,7 +246,8 @@ class ActionDecider(object):
 class RandomActionDecider(ActionDecider):
     def __init__(self):
         # Randome decider shouldn't be able to quit the game
-        super().__init__([action for action in Actions if action.value != 6])
+        super().__init__([action for action in Actions if action not in
+                          [Actions.QUIT, Actions.SPACE]])
 
     def get_action(self, game):
         return [self.action_space[random.randint(0, len(self.action_space) -
