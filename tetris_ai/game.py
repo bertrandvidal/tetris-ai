@@ -125,13 +125,19 @@ class Tetris:
             self.figure.rotation = old_rotation
 
 
+class TetrisDrawer(object):
+    """Hold all the logic to render a game of Tetris
+    """
+
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+    GRAY = (128, 128, 128)
+
+
+drawer = TetrisDrawer()
+
 # Initialize the game engine
 pygame.init()
-
-# Define some colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GRAY = (128, 128, 128)
 
 size = (400, 500)
 screen = pygame.display.set_mode(size)
@@ -176,13 +182,13 @@ while not done:
             if event.key == pygame.K_DOWN:
                 pressing_down = False
 
-    screen.fill(WHITE)
+    screen.fill(TetrisDrawer.WHITE)
 
     for i in range(game.height):
         for j in range(game.width):
             pygame.draw.rect(
                 screen,
-                GRAY,
+                TetrisDrawer.GRAY,
                 [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom],
                 1,
             )
@@ -216,7 +222,7 @@ while not done:
 
     font = pygame.font.SysFont("Calibri", 25, True, False)
     font1 = pygame.font.SysFont("Calibri", 65, True, False)
-    text = font.render("Score: " + str(game.score), True, BLACK)
+    text = font.render("Score: " + str(game.score), True, TetrisDrawer.BLACK)
     text_game_over = font1.render("Game Over :( ", True, (255, 0, 0))
 
     screen.blit(text, [0, 0])
