@@ -42,7 +42,6 @@ class Figure:
 class Tetris:
     level = 2
     score = 0
-    # TODO: avoid hard coded state have a method w/ a proper name
     state = "start"
     field = []
     height = 0
@@ -63,6 +62,12 @@ class Tetris:
 
     def new_figure(self):
         self.figure = Figure(3, 0)
+
+    def gameover(self):
+        self.state = "gameover"
+
+    def is_done(self):
+        return self.state == "gameover"
 
     def intersects(self):
         intersection = False
@@ -112,7 +117,7 @@ class Tetris:
         self.break_lines()
         self.new_figure()
         if self.intersects():
-            game.state = "gameover"
+            game.gameover()
 
     def go_side(self, dx):
         old_x = self.figure.x
@@ -151,7 +156,7 @@ class TetrisDrawer(object):
         self.render_grid_and_pieces(game)
         self.render_current_piece(game)
         self.render_score(game)
-        if game.state == "gameover":
+        if game.is_done():
             self.render_game_over()
         pygame.display.flip()
 
