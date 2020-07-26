@@ -222,7 +222,6 @@ clock = pygame.time.Clock()
 fps = 25
 game = Tetris(20, 10)
 counter = 0
-
 pressing_down = False
 
 
@@ -259,42 +258,46 @@ class KeyboardAction(ActionDecider):
         super().__init__([action for action in Actions])
 
     def get_action(self, counter, game):
-        action = None
+        actions = []
+        # automatically go down if no input
+        if counter % (fps // game.level // 2) == 0:
+            actions.append(Actions.DOWN)
+
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    action = Actions.ROTATE
+                    actions.append(Actions.ROTATE)
                 if event.key == pygame.K_DOWN:
-                    action = Actions.DOWN
+                    actions.append(Actions.DOWN)
                 if event.key == pygame.K_LEFT:
-                    action = Actions.LEFT
+                    actions.append(Actions.LEFT)
                 if event.key == pygame.K_RIGHT:
-                    action = Actions.RIGHT
+                    actions.append(Actions.RIGHT)
                 if event.key == pygame.K_SPACE:
-                    action = Actions.SPACE
+                    actions.append(Actions.SPACE)
                 if event.key == pygame.QUIT:
-                    action = Actions.QUIT
-        # automatically go down if no input
-        if counter % (fps // game.level // 2) == 0:
-            action = Actions.DOWN
-        return action
+                    print("YOU ARE PRESSING ESCAPE!")
+                    actions = [Actions.QUIT]
+        return actions
 
 
 class ActionApplier(object):
-    def apply_action(self, action, game):
-        if action == Actions.ROTATE:
-            game.rotate()
-        if action == Actions.LEFT:
-            game.go_side(-1)
-        if action == Actions.RIGHT:
-            game.go_side(1)
-        if action == Actions.SPACE:
-            game.go_space()
-        if action == Actions.DOWN:
-            game.go_down()
-        if action == Actions.QUIT:
-            # Yep we're done!!
-            return False
+    def apply_actions(self, actions, game):
+        for action in actions:
+            if action == Actions.ROTATE:
+                game.rotate()
+            if action == Actions.LEFT:
+                game.go_side(-1)
+            if action == Actions.RIGHT:
+                game.go_side(1)
+            if action == Actions.SPACE:
+                game.go_space()
+            if action == Actions.DOWN:
+                game.go_down()
+            if action == Actions.QUIT:
+                # Yep we're done!!
+                return True
+        return False
 
 
 decider = RandomActionDecider()
@@ -308,8 +311,8 @@ while not done:
     if counter > 100000:
         counter = 0
 
-    action = decider.get_action(counter, game)
-    done = applier.apply_action(action, game)
+    actions = decider.get_action(counter, game)
+    done = applier.apply_actions(actions, game)
     drawer.render(game)
     clock.tick(fps)
 
