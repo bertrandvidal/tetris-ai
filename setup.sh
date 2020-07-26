@@ -14,4 +14,4 @@ python .pygame/setup.py -config -auto -sdl2
 python .pygame/setup.py install
 
 # install our Gym Environment
-pip install -e gym-tetris-env/
+pip install -e .
