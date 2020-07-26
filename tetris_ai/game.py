@@ -42,6 +42,7 @@ class Figure:
 class Tetris:
     level = 2
     score = 0
+    # TODO: avoid hard coded state have a method w/ a proper name
     state = "start"
     field = []
     height = 0
@@ -291,8 +292,8 @@ class ActionApplier(object):
             return False
 
 
-decider = KeyboardAction()
 decider = RandomActionDecider()
+decider = KeyboardAction()
 applier = ActionApplier()
 
 while not done:
@@ -306,6 +307,8 @@ while not done:
         if game.state == "start":
             game.go_down()
 
+    # TODO: if no action it should be go_down if counter % (fps // game.level
+    # // 2) == 0 ...
     action = decider.get_action(game)
     done = applier.apply_action(action, game)
     drawer.render(game)
