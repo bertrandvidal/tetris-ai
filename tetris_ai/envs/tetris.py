@@ -1,7 +1,8 @@
 import gym
 
+
 class TetrisEnv(gym.Env):
-    metadata = {'render.modes': ['human']}
+    metadata = {"render.modes": ["human"]}
 
     def __init__(self):
         pass
@@ -12,7 +13,7 @@ class TetrisEnv(gym.Env):
     def reset(self):
         pass
 
-    def render(self, mode='human'):
+    def render(self, mode="human"):
         pass
 
     def close(self):
