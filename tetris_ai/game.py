@@ -258,21 +258,26 @@ class KeyboardAction(ActionDecider):
     def __init__(self):
         super().__init__([action for action in Actions])
 
-    def get_action(self, game):
+    def get_action(self, counter, game):
+        action = None
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    return Actions.ROTATE
+                    action = Actions.ROTATE
                 if event.key == pygame.K_DOWN:
-                    return Actions.DOWN
+                    action = Actions.DOWN
                 if event.key == pygame.K_LEFT:
-                    return Actions.LEFT
+                    action = Actions.LEFT
                 if event.key == pygame.K_RIGHT:
-                    return Actions.RIGHT
+                    action = Actions.RIGHT
                 if event.key == pygame.K_SPACE:
-                    return Actions.SPACE
+                    action = Actions.SPACE
                 if event.key == pygame.QUIT:
-                    return Actions.QUIT
+                    action = Actions.QUIT
+        # automatically go down if no input
+        if counter % (fps // game.level // 2) == 0:
+            action = Actions.DOWN
+        return action
 
 
 class ActionApplier(object):
@@ -303,13 +308,7 @@ while not done:
     if counter > 100000:
         counter = 0
 
-    if counter % (fps // game.level // 2) == 0 or pressing_down:
-        if game.state == "start":
-            game.go_down()
-
-    # TODO: if no action it should be go_down if counter % (fps // game.level
-    # // 2) == 0 ...
-    action = decider.get_action(game)
+    action = decider.get_action(counter, game)
     done = applier.apply_action(action, game)
     drawer.render(game)
     clock.tick(fps)
