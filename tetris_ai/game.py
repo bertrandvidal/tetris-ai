@@ -1,5 +1,6 @@
 import pygame
 import random
+from enum import Enum
 
 colors = [
     (0, 0, 0),
@@ -223,6 +224,77 @@ counter = 0
 
 pressing_down = False
 
+
+class Actions(Enum):
+    ROTATE = 1
+    LEFT = 2
+    RIGHT = 3
+    DOWN = 4
+    SPACE = 5
+    QUIT = 6
+
+
+class ActionDecider(object):
+    action_space = None
+
+    def __init__(self, action_space):
+        self.action_space = action_space
+
+    def get_action(self, game):
+        raise NotImplementedError
+
+
+class RandomActionDecider(ActionDecider):
+    def __init__(self):
+        # Randome decider shouldn't be able to quit the game
+        super().__init__([action for action in Actions if action.value != 6])
+
+    def get_action(self, game):
+        return self.action_space[random.randint(0, len(self.action_space) - 1)]
+
+
+class KeyboardAction(ActionDecider):
+    def __init__(self):
+        super().__init__([action for action in Actions])
+
+    def get_action(self, game):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    return Actions.ROTATE
+                if event.key == pygame.K_DOWN:
+                    return Actions.DOWN
+                if event.key == pygame.K_LEFT:
+                    return Actions.LEFT
+                if event.key == pygame.K_RIGHT:
+                    return Actions.RIGHT
+                if event.key == pygame.K_SPACE:
+                    return Actions.SPACE
+                if event.key == pygame.QUIT:
+                    return Actions.QUIT
+
+
+class ActionApplier(object):
+    def apply_action(self, action, game):
+        if action == Actions.ROTATE:
+            game.rotate()
+        if action == Actions.LEFT:
+            game.go_side(-1)
+        if action == Actions.RIGHT:
+            game.go_side(1)
+        if action == Actions.SPACE:
+            game.go_space()
+        if action == Actions.DOWN:
+            game.go_down()
+        if action == Actions.QUIT:
+            # Yep we're done!!
+            return False
+
+
+decider = KeyboardAction()
+decider = RandomActionDecider()
+applier = ActionApplier()
+
 while not done:
     if game.figure is None:
         game.new_figure()
@@ -234,26 +306,9 @@ while not done:
         if game.state == "start":
             game.go_down()
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                game.rotate()
-            if event.key == pygame.K_DOWN:
-                pressing_down = True
-            if event.key == pygame.K_LEFT:
-                game.go_side(-1)
-            if event.key == pygame.K_RIGHT:
-                game.go_side(1)
-            if event.key == pygame.K_SPACE:
-                game.go_space()
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_DOWN:
-                pressing_down = False
-
+    action = decider.get_action(game)
+    done = applier.apply_action(action, game)
     drawer.render(game)
-
     clock.tick(fps)
 
 pygame.quit()
