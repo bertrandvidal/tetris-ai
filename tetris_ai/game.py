@@ -212,19 +212,6 @@ class TetrisDrawer(object):
         self.screen.blit(text_game_over, [10, 200])
 
 
-# Initialize the game engine
-pygame.init()
-drawer = TetrisDrawer()
-
-# Loop until the user clicks the close button.
-done = False
-clock = pygame.time.Clock()
-fps = 25
-game = Tetris(20, 10)
-counter = 0
-pressing_down = False
-
-
 class Actions(Enum):
     ROTATE = 1
     LEFT = 2
@@ -299,7 +286,18 @@ class ActionApplier(object):
         return False
 
 
-decider = RandomActionDecider()
+# Initialize the game engine
+pygame.init()
+drawer = TetrisDrawer()
+
+# Loop until the user clicks the close button.
+done = False
+clock = pygame.time.Clock()
+fps = 25
+game = Tetris(20, 10)
+counter = 0
+pressing_down = False
+
 decider = KeyboardAction()
 applier = ActionApplier()
 
