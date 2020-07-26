@@ -117,7 +117,7 @@ class Tetris:
         self.break_lines()
         self.new_figure()
         if self.intersects():
-            game.gameover()
+            self.gameover()
 
     def go_side(self, dx):
         old_x = self.figure.x
@@ -249,7 +249,8 @@ class RandomActionDecider(ActionDecider):
         super().__init__([action for action in Actions if action.value != 6])
 
     def get_action(self, game):
-        return self.action_space[random.randint(0, len(self.action_space) - 1)]
+        return [self.action_space[random.randint(0, len(self.action_space) -
+                                                 1)]]
 
 
 class KeyboardAction(ActionDecider):
@@ -321,4 +322,5 @@ if __name__ == "__main__":
         done = applier.apply_actions(actions, game)
         drawer.render(game)
 
+    clock = pygame.time.Clock()
     drawer.close()

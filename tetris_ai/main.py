@@ -4,13 +4,12 @@ from tetris_ai.game import *
 env = gym.make("tetris_ai:tetris_gym-v0")
 observation = env.reset()
 action_decider = RandomActionDecider()
+done = False
 
-for iteration in range(50):
+while not done:
     env.render()
     action =  action_decider.get_action(observation)
     observation, reward, done, info = env.step(action)
-    if done:
-        continue
+    print(f"{action}: {reward} - {done}")
 
 env.close()
-pygame.quit()
