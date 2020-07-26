@@ -5,13 +5,17 @@ from tetris_ai.game import *
 class TetrisEnv(gym.Env):
     metadata = {"render.modes": ["human"]}
 
+    BOARD_HEIGHT = 20
+    BOARD_WIDTH = 10
+
     drawer = None
     game = None
     applier = None
     counter = 0
 
     def __init__(self):
-        self.observation_space = None
+        self.observation_space = spaces.Tuple((spaces.Discrete(TetrisEnv.BOARD_HEIGHT),
+                                              spaces.Discrete(TetrisEnv.BOARD_WIDTH)))
         self.action_space = spaces.Discrete(max([action.value for action in
                                                  Actions if action not in
                                                  [Actions.QUIT, Actions.SPACE]]))
@@ -27,7 +31,7 @@ class TetrisEnv(gym.Env):
 
     def reset(self):
         self.drawer = TetrisDrawer()
-        self.game = Tetris(20, 10)
+        self.game = Tetris(TetrisEnv.BOARD_HEIGHT, TetrisEnv.BOARD_WIDTH)
         self.applier = ActionApplier()
         self.counter = 0
         return self.game
