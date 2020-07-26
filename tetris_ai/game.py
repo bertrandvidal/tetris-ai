@@ -133,16 +133,86 @@ class TetrisDrawer(object):
     WHITE = (255, 255, 255)
     GRAY = (128, 128, 128)
 
+    size = (400, 500)
+    screen = None
+    score_font = None
+    game_over_font = None
 
-drawer = TetrisDrawer()
+    def __init__(self):
+        self.screen = pygame.display.set_mode(self.size)
+        pygame.display.set_caption("Tetris")
+        self.score_font = pygame.font.SysFont("Calibri", 25, True, False)
+        self.game_over_font = pygame.font.SysFont("Calibri", 65, True, False)
+
+    def render(self, game):
+        self.clear_screen()
+        self.render_grid_and_pieces(game)
+        self.render_current_piece(game)
+        self.render_score(game)
+        if game.state == "gameover":
+            self.render_game_over()
+        pygame.display.flip()
+
+    def clear_screen(self):
+        self.screen.fill(TetrisDrawer.WHITE)
+
+    def render_grid_and_pieces(self, game):
+        for i in range(game.height):
+            for j in range(game.width):
+                pygame.draw.rect(
+                    self.screen,
+                    TetrisDrawer.GRAY,
+                    [
+                        game.x + game.zoom * j,
+                        game.y + game.zoom * i,
+                        game.zoom,
+                        game.zoom,
+                    ],
+                    1,
+                )
+                if game.field[i][j] > 0:
+                    pygame.draw.rect(
+                        self.screen,
+                        colors[game.field[i][j]],
+                        [
+                            game.x + game.zoom * j + 1,
+                            game.y + game.zoom * i + 1,
+                            game.zoom - 2,
+                            game.zoom - 1,
+                        ],
+                    )
+
+    def render_current_piece(self, game):
+        if game.figure is not None:
+            for i in range(4):
+                for j in range(4):
+                    p = i * 4 + j
+                    if p in game.figure.image():
+                        pygame.draw.rect(
+                            self.screen,
+                            colors[game.figure.color],
+                            [
+                                game.x + game.zoom * (j + game.figure.x) + 1,
+                                game.y + game.zoom * (i + game.figure.y) + 1,
+                                game.zoom - 2,
+                                game.zoom - 2,
+                            ],
+                        )
+
+    def render_score(self, game):
+        text = self.score_font.render(
+            "Score: " + str(game.score), True, TetrisDrawer.BLACK
+        )
+        self.screen.blit(text, [0, 0])
+
+    def render_game_over(self, game):
+        text_game_over = self.game_over_font.render("Game Over :( ", True, (255, 0, 0))
+        self.screen.blit(text_game_over, [10, 200])
+
 
 # Initialize the game engine
 pygame.init()
-
-size = (400, 500)
-screen = pygame.display.set_mode(size)
-
-pygame.display.set_caption("Tetris")
+drawer = TetrisDrawer()
 
 # Loop until the user clicks the close button.
 done = False
@@ -182,54 +252,8 @@ while not done:
             if event.key == pygame.K_DOWN:
                 pressing_down = False
 
-    screen.fill(TetrisDrawer.WHITE)
+    drawer.render(game)
 
-    for i in range(game.height):
-        for j in range(game.width):
-            pygame.draw.rect(
-                screen,
-                TetrisDrawer.GRAY,
-                [game.x + game.zoom * j, game.y + game.zoom * i, game.zoom, game.zoom],
-                1,
-            )
-            if game.field[i][j] > 0:
-                pygame.draw.rect(
-                    screen,
-                    colors[game.field[i][j]],
-                    [
-                        game.x + game.zoom * j + 1,
-                        game.y + game.zoom * i + 1,
-                        game.zoom - 2,
-                        game.zoom - 1,
-                    ],
-                )
-
-    if game.figure is not None:
-        for i in range(4):
-            for j in range(4):
-                p = i * 4 + j
-                if p in game.figure.image():
-                    pygame.draw.rect(
-                        screen,
-                        colors[game.figure.color],
-                        [
-                            game.x + game.zoom * (j + game.figure.x) + 1,
-                            game.y + game.zoom * (i + game.figure.y) + 1,
-                            game.zoom - 2,
-                            game.zoom - 2,
-                        ],
-                    )
-
-    font = pygame.font.SysFont("Calibri", 25, True, False)
-    font1 = pygame.font.SysFont("Calibri", 65, True, False)
-    text = font.render("Score: " + str(game.score), True, TetrisDrawer.BLACK)
-    text_game_over = font1.render("Game Over :( ", True, (255, 0, 0))
-
-    screen.blit(text, [0, 0])
-    if game.state == "gameover":
-        screen.blit(text_game_over, [10, 200])
-
-    pygame.display.flip()
     clock.tick(fps)
 
 pygame.quit()
