@@ -4,6 +4,7 @@
 virtualenv -q -p python3 env-tetris-ai
 source env-tetris-ai/bin/activate
 python -m pip install --upgrade pip
+pip install black
 
 # install pygame dependencies
 brew install sdl2 sdl2_gfx sdl2_image sdl2_mixer sdl2_net sdl2_ttf
