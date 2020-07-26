@@ -205,7 +205,7 @@ class TetrisDrawer(object):
         )
         self.screen.blit(text, [0, 0])
 
-    def render_game_over(self, game):
+    def render_game_over(self):
         text_game_over = self.game_over_font.render("Game Over :( ", True, (255, 0, 0))
         self.screen.blit(text_game_over, [10, 200])
 
