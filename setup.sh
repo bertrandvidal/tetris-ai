@@ -12,3 +12,6 @@ brew install sdl2 sdl2_gfx sdl2_image sdl2_mixer sdl2_net sdl2_ttf
 git clone -b 1.9.6 https://github.com/pygame/pygame.git .pygame
 python .pygame/setup.py -config -auto -sdl2
 python .pygame/setup.py install
+
+# install our Gym Environment
+pip install -e gym-tetris-env/
