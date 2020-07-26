@@ -286,30 +286,31 @@ class ActionApplier(object):
         return False
 
 
-# Initialize the game engine
-pygame.init()
-drawer = TetrisDrawer()
+if __name__ == "__main__":
+    # Initialize the game engine
+    pygame.init()
+    drawer = TetrisDrawer()
 
-# Loop until the user clicks the close button.
-done = False
-clock = pygame.time.Clock()
-fps = 25
-game = Tetris(20, 10)
-counter = 0
+    # Loop until the user clicks the close button.
+    done = False
+    clock = pygame.time.Clock()
+    fps = 25
+    game = Tetris(20, 10)
+    counter = 0
 
-decider = KeyboardAction()
-applier = ActionApplier()
+    decider = KeyboardAction()
+    applier = ActionApplier()
 
-while not done:
-    if game.figure is None:
-        game.new_figure()
-    counter += 1
-    if counter > 100000:
-        counter = 0
+    while not done:
+        if game.figure is None:
+            game.new_figure()
+        counter += 1
+        if counter > 100000:
+            counter = 0
 
-    actions = decider.get_action(counter, game)
-    done = applier.apply_actions(actions, game)
-    drawer.render(game)
-    clock.tick(fps)
+        actions = decider.get_action(counter, game)
+        done = applier.apply_actions(actions, game)
+        drawer.render(game)
+        clock.tick(fps)
 
-pygame.quit()
+    pygame.quit()
