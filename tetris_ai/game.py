@@ -135,7 +135,7 @@ class Tetris:
 class TetrisDrawer(object):
     """Hold all the logic to render a game of Tetris
     """
-
+    FPS = 25
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     GRAY = (128, 128, 128)
@@ -144,12 +144,18 @@ class TetrisDrawer(object):
     screen = None
     score_font = None
     game_over_font = None
+    clock = None
 
     def __init__(self):
+        pygame.init()
         self.screen = pygame.display.set_mode(self.size)
+        self.clock = pygame.time.Clock()
         pygame.display.set_caption("Tetris")
         self.score_font = pygame.font.SysFont("Calibri", 25, True, False)
         self.game_over_font = pygame.font.SysFont("Calibri", 65, True, False)
+
+    def close(self):
+        pygame.quit()
 
     def render(self, game):
         self.clear_screen()
@@ -159,6 +165,7 @@ class TetrisDrawer(object):
         if game.is_done():
             self.render_game_over()
         pygame.display.flip()
+        self.clock.tick(TetrisDrawer.FPS)
 
     def clear_screen(self):
         self.screen.fill(TetrisDrawer.WHITE)
@@ -252,7 +259,7 @@ class KeyboardAction(ActionDecider):
     def get_action(self, counter, game):
         actions = []
         # automatically go down if no input
-        if counter % (fps // game.level // 2) == 0:
+        if counter % (TetrisDrawer.FPS // game.level // 2) == 0:
             actions.append(Actions.DOWN)
 
         for event in pygame.event.get():
@@ -293,13 +300,10 @@ class ActionApplier(object):
 
 if __name__ == "__main__":
     # Initialize the game engine
-    pygame.init()
     drawer = TetrisDrawer()
 
     # Loop until the user clicks the close button.
     done = False
-    clock = pygame.time.Clock()
-    fps = 25
     game = Tetris(20, 10)
     counter = 0
 
@@ -316,6 +320,5 @@ if __name__ == "__main__":
         actions = decider.get_action(counter, game)
         done = applier.apply_actions(actions, game)
         drawer.render(game)
-        clock.tick(fps)
 
-    pygame.quit()
+    drawer.close()

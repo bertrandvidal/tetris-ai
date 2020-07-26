@@ -22,4 +22,4 @@ class TetrisEnv(gym.Env):
         self.drawer.render(self.game)
 
     def close(self):
-        pass
+        self.drawer.close()
