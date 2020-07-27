@@ -140,6 +140,7 @@ class TetrisDrawer(object):
     """Hold all the logic to render a game of Tetris
     """
 
+    INITIALIZED = None
     FPS = 25
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -152,17 +153,30 @@ class TetrisDrawer(object):
     clock = None
 
     def __init__(self):
-        pygame.init()
+        self.screen = None
+        self.clock = None
+        self.score_font = None
+        self.game_over_font = None
+
+    def _setup(self):
         self.screen = pygame.display.set_mode(self.size)
         self.clock = pygame.time.Clock()
-        pygame.display.set_caption("Tetris")
         self.score_font = pygame.font.SysFont("Calibri", 25, True, False)
         self.game_over_font = pygame.font.SysFont("Calibri", 65, True, False)
+
+    def _load_pygame(self):
+        pygame.init()
+        pygame.display.set_caption("Tetris-Now With AI!")
 
     def close(self):
         pygame.quit()
 
     def render(self, game):
+        if TetrisDrawer.INITIALIZED is None:
+            self._load_pygame()
+            TetrisDrawer.INITIALIZED = True
+        if self.screen is None:
+            self._setup()
         self.clear_screen()
         self.render_grid_and_pieces(game)
         self.render_current_piece(game)
