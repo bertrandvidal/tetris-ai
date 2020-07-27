@@ -134,3 +134,4 @@ dmypy.json
 
 # neural network weights
 *h5f*
+nn_weights/checkpoint
