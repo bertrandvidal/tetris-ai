@@ -135,6 +135,7 @@ class Tetris:
 class TetrisDrawer(object):
     """Hold all the logic to render a game of Tetris
     """
+
     FPS = 25
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -225,12 +226,12 @@ class TetrisDrawer(object):
 
 
 class Actions(Enum):
-    ROTATE = 1
-    LEFT = 2
-    RIGHT = 3
-    DOWN = 4
-    SPACE = 5
-    QUIT = 6
+    ROTATE = 0
+    LEFT = 1
+    RIGHT = 2
+    DOWN = 3
+    SPACE = 4
+    QUIT = 5
 
 
 class ActionDecider(object):
@@ -246,12 +247,16 @@ class ActionDecider(object):
 class RandomActionDecider(ActionDecider):
     def __init__(self):
         # Randome decider shouldn't be able to quit the game
-        super().__init__([action for action in Actions if action not in
-                          [Actions.QUIT, Actions.SPACE]])
+        super().__init__(
+            [
+                action
+                for action in Actions
+                if action not in [Actions.QUIT, Actions.SPACE]
+            ]
+        )
 
     def get_action(self, game):
-        return [self.action_space[random.randint(0, len(self.action_space) -
-                                                 1)]]
+        return [self.action_space[random.randint(0, len(self.action_space) - 1)]]
 
 
 class KeyboardAction(ActionDecider):

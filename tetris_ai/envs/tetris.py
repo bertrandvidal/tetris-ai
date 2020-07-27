@@ -40,18 +40,30 @@ class TetrisEnv(gym.Env):
         if self.game.figure is None:
             self.game.new_figure()
         self.game.go_down()
-        self.applier.apply_actions(action, self.game)
-        return self.game, self.game.score, self.game.is_done(), None
+        self.applier.apply_actions([Actions(action)], self.game)
+        return self._game_to_observation(), self.game.score, self.game.is_done(), {}
 
     def reset(self):
         self.drawer = TetrisDrawer()
         self.game = Tetris(TetrisEnv.BOARD_HEIGHT, TetrisEnv.BOARD_WIDTH)
         self.applier = ActionApplier()
         self.counter = 0
-        return self.game
+        return self._game_to_observation()
 
     def render(self, mode="human"):
         self.drawer.render(self.game)
 
     def close(self):
         self.drawer.close()
+
+    def _game_to_observation(self):
+        """returns a 2d array of booleans representing whether or not a piece
+        is in position (x,y)
+        """
+        observation = []
+        for i in range(TetrisEnv.BOARD_HEIGHT):
+            new_line = []
+            for j in range(TetrisEnv.BOARD_WIDTH):
+                new_line.append(bool(self.game.field[i][j]))
+            observation.append(new_line)
+        return observation
