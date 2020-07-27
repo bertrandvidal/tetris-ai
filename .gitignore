@@ -131,3 +131,6 @@ dmypy.json
 
 # pygame install from source
 .pygame
+
+# neural network weights
+*h5f*
