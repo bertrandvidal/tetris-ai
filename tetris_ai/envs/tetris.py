@@ -1,6 +1,8 @@
 import gym
 from gym import spaces
 from tetris_ai.game import *
+import numpy as np
+
 
 class TetrisEnv(gym.Env):
     metadata = {"render.modes": ["human"]}
@@ -14,11 +16,23 @@ class TetrisEnv(gym.Env):
     counter = 0
 
     def __init__(self):
-        self.observation_space = spaces.Tuple((spaces.Discrete(TetrisEnv.BOARD_HEIGHT),
-                                              spaces.Discrete(TetrisEnv.BOARD_WIDTH)))
-        self.action_space = spaces.Discrete(max([action.value for action in
-                                                 Actions if action not in
-                                                 [Actions.QUIT, Actions.SPACE]]))
+        # observation_space is the tetris "screen", height x width of 0/1
+        # wheter the space is occupied by a piece or not
+        self.observation_space = spaces.Box(
+            low=0,
+            high=1,
+            shape=(TetrisEnv.BOARD_HEIGHT, TetrisEnv.BOARD_WIDTH),
+            dtype=np.uintc,
+        )
+        self.action_space = spaces.Discrete(
+            max(
+                [
+                    action.value
+                    for action in Actions
+                    if action not in [Actions.QUIT, Actions.SPACE]
+                ]
+            )
+        )
 
     def step(self, action):
         self.counter += 1
