@@ -12,7 +12,7 @@ class TetrisEnv(gym.Env):
 
     drawer = None
     game = None
-    applier = None
+    applier = ActionApplier()
     counter = 0
 
     def __init__(self):
@@ -29,7 +29,7 @@ class TetrisEnv(gym.Env):
                 [
                     action.value
                     for action in Actions
-                    if action not in [Actions.QUIT, Actions.SPACE]
+                    if action not in [Actions.QUIT, Actions.SPACE, Actions.DOWN]
                 ]
             )
         )
@@ -46,7 +46,6 @@ class TetrisEnv(gym.Env):
     def reset(self):
         self.drawer = TetrisDrawer()
         self.game = Tetris(TetrisEnv.BOARD_HEIGHT, TetrisEnv.BOARD_WIDTH)
-        self.applier = ActionApplier()
         self.counter = 0
         return self._game_to_observation()
 

@@ -54,17 +54,16 @@ class ResetEnvCallback(Callback):
         self.env = env
 
     def on_episode_end(self, episode, logs={}):
-        print(episode)
         self.env.reset()
 
 
 dqn.fit(
-    env, nb_steps=1000, visualize=True, verbose=1, callbacks=[ResetEnvCallback(env)]
+    env, nb_steps=1000, visualize=True, callbacks=[ResetEnvCallback(env)]
 )
 
 # After training is done, we save the final weights.
 dqn.save_weights(
-    "dqn_{}_{}_weights.h5f".format(env.spec.id, datetime.now().strftime("%Y%m%d%H%M")),
+    "nn_weights/dqn_{}_{}_weights.h5f".format(env.spec.id, datetime.now().strftime("%Y%m%d%H%M")),
     overwrite=True,
 )
 

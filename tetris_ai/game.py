@@ -54,6 +54,10 @@ class Tetris:
     def __init__(self, height, width):
         self.height = height
         self.width = width
+        self.state = "start"
+        self.field = []
+        self.score = 0
+        self.figure = None
         for i in range(height):
             new_line = []
             for j in range(width):
