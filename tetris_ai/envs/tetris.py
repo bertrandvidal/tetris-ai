@@ -36,11 +36,12 @@ class TetrisEnv(gym.Env):
 
     def step(self, action):
         self.counter += 1
-        print(f"step {self.counter}: {self.game.score}")
+        action_to_perform = Actions(action)
+        print(f"step {self.counter}({self.game.score}): {action_to_perform}")
         if self.game.figure is None:
             self.game.new_figure()
         self.game.go_down()
-        self.applier.apply_actions([Actions(action)], self.game)
+        self.applier.apply_actions([action_to_perform], self.game)
         return self._game_to_observation(), self.game.score, self.game.is_done(), {}
 
     def reset(self):
