@@ -172,7 +172,7 @@ class TetrisDrawer(object):
     def close(self):
         pygame.quit()
 
-    def render(self, game):
+    def render(self, game, info=None):
         if TetrisDrawer.INITIALIZED is None:
             self._load_pygame()
             TetrisDrawer.INITIALIZED = True
@@ -181,7 +181,7 @@ class TetrisDrawer(object):
         self.clear_screen()
         self.render_grid_and_pieces(game)
         self.render_current_piece(game)
-        self.render_score(game)
+        self.render_info(info or "")
         if game.is_done():
             self.render_game_over()
         pygame.display.flip()
@@ -233,9 +233,9 @@ class TetrisDrawer(object):
                             ],
                         )
 
-    def render_score(self, game):
+    def render_info(self, info):
         text = self.score_font.render(
-            "Score: " + str(game.score), True, TetrisDrawer.BLACK
+            info, True, TetrisDrawer.BLACK
         )
         self.screen.blit(text, [0, 0])
 

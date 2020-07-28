@@ -14,6 +14,7 @@ class TetrisEnv(gym.Env):
     game = None
     applier = ActionApplier()
     counter = 0
+    reward = 0
 
     def __init__(self):
         # observation_space is the tetris "screen", height x width of 0/1
@@ -38,7 +39,8 @@ class TetrisEnv(gym.Env):
         self.counter += 1
         action_to_perform = Actions(action)
         reward = self._reward()
-        print(f"step {self.counter}({reward}): {action_to_perform}")
+        self.reward += reward
+        print(f"step {self.counter}({self.reward}): {action_to_perform}")
         if self.game.figure is None:
             self.game.new_figure()
         self.game.go_down()
@@ -49,13 +51,17 @@ class TetrisEnv(gym.Env):
         self.drawer = TetrisDrawer()
         self.game = Tetris(TetrisEnv.BOARD_HEIGHT, TetrisEnv.BOARD_WIDTH)
         self.counter = 0
+        self.reward = 0
         return self._game_to_observation()
 
     def render(self, mode="human"):
-        self.drawer.render(self.game)
+        self.drawer.render(self.game, self._get_display_info())
 
     def close(self):
         self.drawer.close()
+
+    def _get_display_info(self):
+        return f"step {self.counter}({self.reward:.5f})"
 
     def _game_to_observation(self):
         """returns a 2d array of booleans representing whether or not a piece
