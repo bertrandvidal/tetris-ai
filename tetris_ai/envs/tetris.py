@@ -42,7 +42,7 @@ class TetrisEnv(gym.Env):
             self.game.new_figure()
         self.game.go_down()
         self.applier.apply_actions([action_to_perform], self.game)
-        return self._game_to_observation(), self.game.score, self.game.is_done(), {}
+        return self._game_to_observation(), self._score(), self.game.is_done(), {}
 
     def reset(self):
         self.drawer = TetrisDrawer()
@@ -67,3 +67,6 @@ class TetrisEnv(gym.Env):
                 new_line.append(bool(self.game.field[i][j]))
             observation.append(new_line)
         return observation
+
+    def _score(self):
+        return self.game.score
