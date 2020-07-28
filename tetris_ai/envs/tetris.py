@@ -37,12 +37,13 @@ class TetrisEnv(gym.Env):
     def step(self, action):
         self.counter += 1
         action_to_perform = Actions(action)
-        print(f"step {self.counter}({self.game.score}): {action_to_perform}")
+        reward = self._reward()
+        print(f"step {self.counter}({reward}): {action_to_perform}")
         if self.game.figure is None:
             self.game.new_figure()
         self.game.go_down()
         self.applier.apply_actions([action_to_perform], self.game)
-        return self._game_to_observation(), self._score(), self.game.is_done(), {}
+        return self._game_to_observation(), reward, self.game.is_done(), {}
 
     def reset(self):
         self.drawer = TetrisDrawer()
@@ -68,5 +69,14 @@ class TetrisEnv(gym.Env):
             observation.append(new_line)
         return observation
 
-    def _score(self):
-        return self.game.score
+    def _reward(self):
+        total_reward = self.game.score
+        lower_tier_height = TetrisEnv.BOARD_HEIGHT // 3 + 1
+        lower_tier_surface_area = lower_tier_height * TetrisEnv.BOARD_WIDTH
+        occupied_area = 0
+        for i in range(TetrisEnv.BOARD_HEIGHT):
+            for j in range(TetrisEnv.BOARD_WIDTH):
+                if self.game.field[i][j] != 0:
+                    occupied_area += 1
+        print(f"{total_reward} + ({occupied_area} / {lower_tier_surface_area})")
+        return total_reward + (occupied_area / lower_tier_surface_area)
