@@ -334,6 +334,7 @@ if __name__ == "__main__":
 
     decider = KeyboardAction()
     applier = ActionApplier()
+    drawer.render(game)
 
     while not done:
         if game.figure is None:
