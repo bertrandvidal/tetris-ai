@@ -58,7 +58,7 @@ class ResetEnvCallback(Callback):
 
 
 dqn.fit(
-    env, nb_steps=1000, visualize=False, verbose=0, callbacks=[ResetEnvCallback(env)]
+    env, nb_steps=1000, visualize=True, verbose=0, callbacks=[ResetEnvCallback(env)]
 )
 
 # After training is done, we save the final weights.
