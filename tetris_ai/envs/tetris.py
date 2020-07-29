@@ -44,12 +44,13 @@ class TetrisEnv(gym.Env):
         action_to_perform = Actions(action)
         reward = self._reward()
         self.reward += reward
-        print(
-            colored(
-                f"step {self.counter}({self.reward:.5f}): {action_to_perform}", "green"
-            ),
-            file=stderr,
-        )
+        if self.counter % 10 == 0:
+            print(
+                colored(
+                    f"step {self.counter}({self.reward:.5f}): {action_to_perform}", "green"
+                ),
+                file=stderr,
+            )
         if self.game.figure is None:
             self.game.new_figure()
         self.game.go_down()
@@ -109,13 +110,14 @@ class TetrisEnv(gym.Env):
         )
         self.lower_tier_occupied_area = lower_tier_occupied_area
         self.upper_tier_occupied_area = upper_tier_occupied_area
-        print(
-            colored(
-                f"{total_reward} + ({positive_reward_occupied_aread} / {third_surface_area}) - ({negative_reward_occupied_aread} / {third_surface_area})",
-                "green",
-            ),
-            file=stderr,
-        )
+        if self.counter % 10 == 0:
+            print(
+                colored(
+                    f"{total_reward} + ({positive_reward_occupied_aread} / {third_surface_area}) - ({negative_reward_occupied_aread} / {third_surface_area})",
+                    "green",
+                ),
+                file=stderr,
+            )
         return (
             total_reward
             + (positive_reward_occupied_aread / third_surface_area)

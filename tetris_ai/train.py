@@ -60,7 +60,7 @@ if __name__ == "__main__":
     env.seed(123)
     agent = get_agent(env)
     agent.fit(
-        env, nb_steps=1000, visualize=True, verbose=0, callbacks=[ResetEnvCallback(env)]
+        env, nb_steps=100000, visualize=False, verbose=0, callbacks=[ResetEnvCallback(env)]
     )
     print(colored("Running Tests", "red"), file=stderr)
     # After training is done, we save the final weights.
