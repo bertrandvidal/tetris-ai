@@ -234,9 +234,7 @@ class TetrisDrawer(object):
                         )
 
     def render_info(self, info):
-        text = self.score_font.render(
-            info, True, TetrisDrawer.BLACK
-        )
+        text = self.score_font.render(info, True, TetrisDrawer.BLACK)
         self.screen.blit(text, [0, 0])
 
     def render_game_over(self):

@@ -7,6 +7,7 @@ from tensorflow.keras.layers import Dense, Activation, Flatten
 from tensorflow.keras.optimizers import Adam
 
 from rl.agents.dqn import DQNAgent
+from rl.callbacks import Callback
 from rl.policy import BoltzmannQPolicy
 from rl.memory import SequentialMemory
 
@@ -44,8 +45,6 @@ dqn = DQNAgent(
 )
 dqn.compile(Adam(lr=1e-3), metrics=["mae"])
 
-from rl.callbacks import Callback
-
 
 class ResetEnvCallback(Callback):
     env = None
@@ -57,9 +56,7 @@ class ResetEnvCallback(Callback):
         self.env.reset()
 
 
-dqn.fit(
-    env, nb_steps=500, visualize=True, verbose=0, callbacks=[ResetEnvCallback(env)]
-)
+dqn.fit(env, nb_steps=500, visualize=True, verbose=0, callbacks=[ResetEnvCallback(env)])
 
 # After training is done, we save the final weights.
 dqn.save_weights(
