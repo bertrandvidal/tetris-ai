@@ -17,6 +17,7 @@ class TetrisEnv(gym.Env):
     applier = ActionApplier()
     counter = 0
     lower_tier_occupied_area = 0
+    upper_tier_occupied_area = 0
     reward = 0
 
     def __init__(self):
@@ -61,6 +62,7 @@ class TetrisEnv(gym.Env):
         self.counter = 0
         self.reward = 0
         self.lower_tier_occupied_area = 0
+        self.upper_tier_occupied_area = 0
         return self._game_to_observation()
 
     def render(self, mode="human"):
@@ -88,21 +90,34 @@ class TetrisEnv(gym.Env):
         total_reward = self.game.score
         third_height = TetrisEnv.BOARD_HEIGHT // 3 + 1
         third_surface_area = third_height * TetrisEnv.BOARD_WIDTH
-        occupied_area = 0
+        lower_tier_occupied_area = 0
+        upper_tier_occupied_area = 0
         for i in range(TetrisEnv.BOARD_HEIGHT):
             for j in range(TetrisEnv.BOARD_WIDTH):
                 if self.game.field[i][j] != 0:
                     # (0, 0) is top left so we need i to be greater than 2
                     # times a third of the height
                     if i >= 2 * third_height:
-                        occupied_area += 1
-        reward_occupied_aread = occupied_area - self.lower_tier_occupied_area
-        self.lower_tier_occupied_area = occupied_area
+                        lower_tier_occupied_area += 1
+                    if i < third_height:
+                        upper_tier_occupied_area += 1
+        positive_reward_occupied_aread = (
+            lower_tier_occupied_area - self.lower_tier_occupied_area
+        )
+        negative_reward_occupied_aread = (
+            upper_tier_occupied_area - self.upper_tier_occupied_area
+        )
+        self.lower_tier_occupied_area = lower_tier_occupied_area
+        self.upper_tier_occupied_area = upper_tier_occupied_area
         print(
             colored(
-                f"{total_reward} + ({reward_occupied_aread} / {third_surface_area})",
+                f"{total_reward} + ({positive_reward_occupied_aread} / {third_surface_area}) - ({negative_reward_occupied_aread} / {third_surface_area})",
                 "green",
             ),
             file=stderr,
         )
-        return total_reward + (reward_occupied_aread / third_surface_area)
+        return (
+            total_reward
+            + (positive_reward_occupied_aread / third_surface_area)
+            - (negative_reward_occupied_aread / third_surface_area)
+        )
