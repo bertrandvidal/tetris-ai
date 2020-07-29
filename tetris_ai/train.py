@@ -11,14 +11,9 @@ from rl.callbacks import Callback
 from rl.policy import BoltzmannQPolicy
 from rl.memory import SequentialMemory
 
-env = gym.make("tetris_ai:tetris_gym-v0")
-observation = env.reset()
-np.random.seed(123)
-env.seed(123)
-nb_actions = env.action_space.n
 
-
-def get_agent():
+def get_agent(env):
+    nb_actions = env.action_space.n
     # I do not understand the following
     model = Sequential()
     model.add(Flatten(input_shape=(1,) + env.observation_space.shape))
@@ -58,7 +53,10 @@ class ResetEnvCallback(Callback):
 
 
 if __name__ == "__main__":
-    agent = get_agent()
+    env = gym.make("tetris_ai:tetris_gym-v0")
+    np.random.seed(123)
+    env.seed(123)
+    agent = get_agent(env)
     agent.fit(
         env, nb_steps=500, visualize=True, verbose=0, callbacks=[ResetEnvCallback(env)]
     )
