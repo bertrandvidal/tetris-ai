@@ -36,7 +36,7 @@ class TetrisEnv(gym.Env):
                     for action in Actions
                     if action not in [Actions.QUIT, Actions.SPACE, Actions.DOWN]
                 ]
-            )
+            ) + 1
         )
 
     def step(self, action):
