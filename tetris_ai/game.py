@@ -146,6 +146,8 @@ class TetrisDrawer(object):
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     GRAY = (128, 128, 128)
+    RED = (255, 128, 128)
+    GREEN = (128, 255, 128)
 
     size = (400, 500)
     screen = None
@@ -193,9 +195,16 @@ class TetrisDrawer(object):
     def render_grid_and_pieces(self, game):
         for i in range(game.height):
             for j in range(game.width):
+                color = TetrisDrawer.GRAY
+                # draw the lower third as red since this is where we want the
+                # tetrominoes to be
+                if i >= 2 * (game.height // 3 + 1):
+                    color = TetrisDrawer.GREEN
+                if i < (game.height // 3 + 1):
+                    color = TetrisDrawer.RED
                 pygame.draw.rect(
                     self.screen,
-                    TetrisDrawer.GRAY,
+                    color,
                     [
                         game.x + game.zoom * j,
                         game.y + game.zoom * i,

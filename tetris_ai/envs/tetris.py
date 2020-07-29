@@ -1,7 +1,9 @@
 import gym
+from sys import stderr
 from gym import spaces
 from tetris_ai.game import *
 import numpy as np
+from termcolor import colored
 
 
 class TetrisEnv(gym.Env):
@@ -14,6 +16,7 @@ class TetrisEnv(gym.Env):
     game = None
     applier = ActionApplier()
     counter = 0
+    lower_tier_occupied_area = 0
     reward = 0
 
     def __init__(self):
@@ -40,7 +43,12 @@ class TetrisEnv(gym.Env):
         action_to_perform = Actions(action)
         reward = self._reward()
         self.reward += reward
-        print(f"step {self.counter}({self.reward}): {action_to_perform}")
+        print(
+            colored(
+                f"step {self.counter}({self.reward:.5f}): {action_to_perform}", "green"
+            ),
+            file=stderr,
+        )
         if self.game.figure is None:
             self.game.new_figure()
         self.game.go_down()
@@ -52,6 +60,7 @@ class TetrisEnv(gym.Env):
         self.game = Tetris(TetrisEnv.BOARD_HEIGHT, TetrisEnv.BOARD_WIDTH)
         self.counter = 0
         self.reward = 0
+        self.lower_tier_occupied_area = 0
         return self._game_to_observation()
 
     def render(self, mode="human"):
@@ -77,12 +86,23 @@ class TetrisEnv(gym.Env):
 
     def _reward(self):
         total_reward = self.game.score
-        lower_tier_height = TetrisEnv.BOARD_HEIGHT // 3 + 1
-        lower_tier_surface_area = lower_tier_height * TetrisEnv.BOARD_WIDTH
+        third_height = TetrisEnv.BOARD_HEIGHT // 3 + 1
+        third_surface_area = third_height * TetrisEnv.BOARD_WIDTH
         occupied_area = 0
         for i in range(TetrisEnv.BOARD_HEIGHT):
             for j in range(TetrisEnv.BOARD_WIDTH):
                 if self.game.field[i][j] != 0:
-                    occupied_area += 1
-        print(f"{total_reward} + ({occupied_area} / {lower_tier_surface_area})")
-        return total_reward + (occupied_area / lower_tier_surface_area)
+                    # (0, 0) is top left so we need i to be greater than 2
+                    # times a third of the height
+                    if i >= 2 * third_height:
+                        occupied_area += 1
+        reward_occupied_aread = occupied_area - self.lower_tier_occupied_area
+        self.lower_tier_occupied_area = occupied_area
+        print(
+            colored(
+                f"{total_reward} + ({reward_occupied_aread} / {third_surface_area})",
+                "green",
+            ),
+            file=stderr,
+        )
+        return total_reward + (reward_occupied_aread / third_surface_area)

@@ -5,6 +5,8 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, Flatten
 from tensorflow.keras.optimizers import Adam
+from termcolor import colored
+from sys import stderr
 
 from rl.agents.dqn import DQNAgent
 from rl.callbacks import Callback
@@ -58,9 +60,9 @@ if __name__ == "__main__":
     env.seed(123)
     agent = get_agent(env)
     agent.fit(
-        env, nb_steps=500, visualize=True, verbose=0, callbacks=[ResetEnvCallback(env)]
+        env, nb_steps=1000, visualize=True, verbose=0, callbacks=[ResetEnvCallback(env)]
     )
-
+    print(colored("Running Tests", "red"), file=stderr)
     # After training is done, we save the final weights.
     agent.save_weights(
         "nn_weights/dqn_{}_{}_weights.h5f".format(
