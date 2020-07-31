@@ -70,7 +70,7 @@ if __name__ == "__main__":
         agent.load_weights(complete_path)
 
     agent.fit(
-        env, nb_steps=100, visualize=False, verbose=0, callbacks=[ResetEnvCallback(env)]
+        env, nb_steps=100, visualize=True, verbose=0, callbacks=[ResetEnvCallback(env)]
     )
 
     print(colored("Running Tests", "red"), file=stderr)

@@ -36,7 +36,8 @@ class TetrisEnv(gym.Env):
                     for action in Actions
                     if action not in [Actions.QUIT, Actions.SPACE, Actions.DOWN]
                 ]
-            ) + 1
+            )
+            + 1
         )
 
     def step(self, action):
@@ -47,7 +48,8 @@ class TetrisEnv(gym.Env):
         if self.counter % 10 == 0:
             print(
                 colored(
-                    f"step {self.counter}({self.reward:.5f}): {action_to_perform}", "green"
+                    f"step {self.counter}({self.reward:.5f}): {action_to_perform}",
+                    "green",
                 ),
                 file=stderr,
             )
@@ -88,7 +90,16 @@ class TetrisEnv(gym.Env):
         return observation
 
     def _reward(self):
-        total_reward = self.game.score
+        rows_cleared = self.game.score
+        positive, negative = self._get_occupied_area_rewards()
+        if self.counter % 10 == 0:
+            print(
+                colored(f"{rows_cleared} + {positive} + {negative}", "green"),
+                file=stderr,
+            )
+        return rows_cleared + positive + negative
+
+    def _get_occupied_area_rewards(self):
         third_height = TetrisEnv.BOARD_HEIGHT // 3 + 1
         third_surface_area = third_height * TetrisEnv.BOARD_WIDTH
         lower_tier_occupied_area = 0
@@ -110,16 +121,7 @@ class TetrisEnv(gym.Env):
         )
         self.lower_tier_occupied_area = lower_tier_occupied_area
         self.upper_tier_occupied_area = upper_tier_occupied_area
-        if self.counter % 10 == 0:
-            print(
-                colored(
-                    f"{total_reward} + ({positive_reward_occupied_aread} / {third_surface_area}) - ({negative_reward_occupied_aread} / {third_surface_area})",
-                    "green",
-                ),
-                file=stderr,
-            )
         return (
-            total_reward
-            + (positive_reward_occupied_aread / third_surface_area)
-            - (negative_reward_occupied_aread / third_surface_area)
+            (positive_reward_occupied_aread / third_surface_area),
+            (negative_reward_occupied_aread / third_surface_area),
         )
