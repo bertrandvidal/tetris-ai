@@ -1,4 +1,5 @@
 import gym
+import os
 from datetime import datetime
 from tetris_ai.game import *
 import numpy as np
@@ -55,21 +56,26 @@ class ResetEnvCallback(Callback):
 
 
 if __name__ == "__main__":
+    version = "0001"
     env = gym.make("tetris_ai:tetris_gym-v0")
+    base_folder = "nn_weights"
+    filename = "dqn_{}_{}.h5f".format(env.spec.id, version)
+    complete_path = os.path.abspath(os.path.join(base_folder, filename))
     np.random.seed(123)
     env.seed(123)
     agent = get_agent(env)
+
+    if any(path.startswith(filename) for path in os.listdir(base_folder)):
+        # load existing weights
+        agent.load_weights(complete_path)
+
     agent.fit(
-        env, nb_steps=100000, visualize=False, verbose=0, callbacks=[ResetEnvCallback(env)]
+        env, nb_steps=100, visualize=False, verbose=0, callbacks=[ResetEnvCallback(env)]
     )
+
     print(colored("Running Tests", "red"), file=stderr)
-    # After training is done, we save the final weights.
-    agent.save_weights(
-        "nn_weights/dqn_{}_{}_weights.h5f".format(
-            env.spec.id, datetime.now().strftime("%Y%m%d%H%M")
-        ),
-        overwrite=True,
-    )
+    # After training is done, we save the final weights to the same file
+    agent.save_weights(complete_path, overwrite=True)
 
     # Finally, evaluate our algorithm for 5 episodes.
     agent.test(env, nb_episodes=5, visualize=True, verbose=0)
