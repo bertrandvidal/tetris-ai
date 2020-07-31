@@ -92,12 +92,35 @@ class TetrisEnv(gym.Env):
     def _reward(self):
         rows_cleared = self.game.score
         positive, negative = self._get_occupied_area_rewards()
+        low_rows = self._get_low_rows_rewards()
         if self.counter % 10 == 0:
             print(
-                colored(f"{rows_cleared} + {positive} + {negative}", "green"),
+                colored(
+                    f"{rows_cleared} + {positive} - {negative} + {low_rows}", "green"
+                ),
                 file=stderr,
             )
         return rows_cleared + positive + negative
+
+    def _get_low_rows_rewards(self):
+        """For low rows, find the longest continuous segment of tetris, express
+        as a ratio of the row length and sum.
+        """
+        nb_low_rows = 5
+        low_rows = self.game.field[TetrisEnv.BOARD_HEIGHT - nb_low_rows :]
+        total_contiguous = 0
+        for row in low_rows:
+            segment_size = 0
+            max_segment = 0
+            previous = None
+            for column in row:
+                if column != 0:
+                    segment_size += 1
+                    max_segment = max(max_segment, segment_size)
+                else:
+                    segment_size = 0
+            total_contiguous += max_segment / TetrisEnv.BOARD_WIDTH
+        return total_contiguous / nb_low_rows
 
     def _get_occupied_area_rewards(self):
         third_height = TetrisEnv.BOARD_HEIGHT // 3 + 1
