@@ -1,5 +1,6 @@
 import gym
 import os
+from termcolor import colored
 from datetime import datetime
 from tetris_ai.game import *
 import numpy as np
@@ -46,17 +47,30 @@ def get_agent(env):
 
 
 class ResetEnvCallback(Callback):
-    env = None
 
     def __init__(self, env):
-        self.env = env
+        self._set_env(env)
 
     def on_episode_end(self, episode, logs={}):
         self.env.reset()
 
 
+class LogStepCallback(Callback):
+
+    def __init__(self, nb_steps, log_every=50):
+        self.current_step = 0
+        self.nb_steps = nb_steps
+        self.log_every = log_every
+
+    def on_step_end(self, step, logs={}):
+        self.current_step += 1
+        if self.current_step % self.log_every == 0:
+            print(colored(f"{self.current_step} / {self.nb_steps}", "blue"), file=stderr)
+
+
 if __name__ == "__main__":
-    version = "0001"
+    version = "0003"
+    nb_steps = 10000
     env = gym.make("tetris_ai:tetris_gym-v0")
     base_folder = "nn_weights"
     filename = "dqn_{}_{}.h5f".format(env.spec.id, version)
@@ -70,7 +84,8 @@ if __name__ == "__main__":
         agent.load_weights(complete_path)
 
     agent.fit(
-        env, nb_steps=10000, visualize=False, verbose=0, callbacks=[ResetEnvCallback(env)]
+        env, nb_steps=nb_steps, visualize=False, verbose=0,
+        callbacks=[ResetEnvCallback(env), LogStepCallback(nb_steps)]
     )
 
     print(colored("Running Tests", "red"), file=stderr)

@@ -19,6 +19,7 @@ class TetrisEnv(gym.Env):
     lower_tier_occupied_area = 0
     upper_tier_occupied_area = 0
     reward = 0
+    log_sampling = 25
 
     def __init__(self):
         # observation_space is the tetris "screen", height x width of 0/1
@@ -45,7 +46,7 @@ class TetrisEnv(gym.Env):
         action_to_perform = Actions(action)
         reward = self._reward()
         self.reward += reward
-        if self.counter % 10 == 0:
+        if self.counter % self.log_sampling == 0:
             print(
                 colored(
                     f"step {self.counter}({self.reward:.5f}): {action_to_perform}",
@@ -93,7 +94,7 @@ class TetrisEnv(gym.Env):
         rows_cleared = self.game.score
         positive, negative = self._get_occupied_area_rewards()
         low_rows = self._get_low_rows_rewards()
-        if self.counter % 10 == 0:
+        if self.counter % self.log_sampling == 0:
             print(
                 colored(
                     f"{rows_cleared} + {positive} - {negative} + {low_rows}", "green"
