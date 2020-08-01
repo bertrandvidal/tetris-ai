@@ -70,7 +70,7 @@ class LogStepCallback(Callback):
 
 if __name__ == "__main__":
     version = "0003"
-    nb_steps = 10000
+    nb_steps = 100000
     env = gym.make("tetris_ai:tetris_gym-v0")
     base_folder = "nn_weights"
     filename = "dqn_{}_{}.h5f".format(env.spec.id, version)
