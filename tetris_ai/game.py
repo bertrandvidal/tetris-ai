@@ -1,6 +1,8 @@
 import pygame
 import random
 from enum import Enum
+from termcolor import colored
+from sys import stderr
 
 colors = [
     (0, 0, 0),
@@ -100,6 +102,8 @@ class Tetris:
                 for i1 in range(i, 1, -1):
                     for j in range(self.width):
                         self.field[i1][j] = self.field[i1 - 1][j]
+        if lines != 0:
+            print(colored(f"IT'S A BINGO {lines}"), file=stderr)
         self.score = lines
 
     def go_space(self):
