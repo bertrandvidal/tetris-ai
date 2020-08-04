@@ -68,6 +68,17 @@ class LogStepCallback(Callback):
             )
 
 
+class EpisodeRewardsCallback(Callback):
+    max_reward = -1
+
+    def __init__(self):
+        self.max_reward = -1
+
+    def on_episode_end(self, episode, logs={}):
+        self.max_reward = max(self.max_reward, logs["episode_reward"])
+        print(colored(f"max reward: {self.max_reward:.5f}", "red"), file=stderr)
+
+
 if __name__ == "__main__":
     version = "0004"
     nb_steps = 100000
@@ -88,7 +99,11 @@ if __name__ == "__main__":
         nb_steps=nb_steps,
         visualize=False,
         verbose=0,
-        callbacks=[ResetEnvCallback(env), LogStepCallback(nb_steps)],
+        callbacks=[
+            ResetEnvCallback(env),
+            LogStepCallback(nb_steps),
+            EpisodeRewardsCallback(),
+        ],
     )
 
     print(colored("Running Tests", "red"), file=stderr)
