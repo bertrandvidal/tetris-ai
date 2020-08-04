@@ -97,7 +97,7 @@ class TetrisEnv(gym.Env):
         if self.counter % self.log_sampling == 0:
             print(
                 colored(
-                    f"{rows_cleared} + {positive} - {negative} + {low_rows}", "green"
+                    f"{rows_cleared} + {positive:.5f} - {negative:.5f} + {low_rows:.5f}", "green"
                 ),
                 file=stderr,
             )
