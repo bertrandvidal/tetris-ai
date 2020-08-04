@@ -38,11 +38,11 @@ def get_agent(env):
         model=model,
         nb_actions=nb_actions,
         memory=memory,
-        nb_steps_warmup=10,
+        nb_steps_warmup=100,
         target_model_update=1e-2,
         policy=policy,
     )
-    dqn.compile(Adam(lr=1e-3), metrics=["mae"])
+    dqn.compile(Adam(lr=0.1), metrics=["mae"])
     return dqn
 
 
@@ -69,7 +69,7 @@ class LogStepCallback(Callback):
 
 
 if __name__ == "__main__":
-    version = "0003"
+    version = "0004"
     nb_steps = 100000
     env = gym.make("tetris_ai:tetris_gym-v0")
     base_folder = "nn_weights"
