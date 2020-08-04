@@ -47,7 +47,6 @@ def get_agent(env):
 
 
 class ResetEnvCallback(Callback):
-
     def __init__(self, env):
         self._set_env(env)
 
@@ -56,7 +55,6 @@ class ResetEnvCallback(Callback):
 
 
 class LogStepCallback(Callback):
-
     def __init__(self, nb_steps, log_every=50):
         self.current_step = 0
         self.nb_steps = nb_steps
@@ -65,7 +63,9 @@ class LogStepCallback(Callback):
     def on_step_end(self, step, logs={}):
         self.current_step += 1
         if self.current_step % self.log_every == 0:
-            print(colored(f"{self.current_step} / {self.nb_steps}", "blue"), file=stderr)
+            print(
+                colored(f"{self.current_step} / {self.nb_steps}", "blue"), file=stderr
+            )
 
 
 if __name__ == "__main__":
@@ -84,8 +84,11 @@ if __name__ == "__main__":
         agent.load_weights(complete_path)
 
     agent.fit(
-        env, nb_steps=nb_steps, visualize=False, verbose=0,
-        callbacks=[ResetEnvCallback(env), LogStepCallback(nb_steps)]
+        env,
+        nb_steps=nb_steps,
+        visualize=False,
+        verbose=0,
+        callbacks=[ResetEnvCallback(env), LogStepCallback(nb_steps)],
     )
 
     print(colored("Running Tests", "red"), file=stderr)
