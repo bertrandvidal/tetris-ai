@@ -18,6 +18,7 @@ class TetrisEnv(gym.Env):
     counter = 0
     lower_tier_occupied_area = 0
     upper_tier_occupied_area = 0
+    total_contiguous = 0
     reward = 0
     log_sampling = 25
 
@@ -67,6 +68,7 @@ class TetrisEnv(gym.Env):
         self.reward = 0
         self.lower_tier_occupied_area = 0
         self.upper_tier_occupied_area = 0
+        self.total_contiguous = 0
         return self._game_to_observation()
 
     def render(self, mode="human"):
@@ -121,7 +123,9 @@ class TetrisEnv(gym.Env):
                 else:
                     segment_size = 0
             total_contiguous += max_segment / TetrisEnv.BOARD_WIDTH
-        return total_contiguous / nb_low_rows
+        delta_contiguous = total_contiguous - self.total_contiguous
+        self.total_contiguous = total_contiguous
+        return delta_contiguous / nb_low_rows
 
     def _get_occupied_area_rewards(self):
         third_height = TetrisEnv.BOARD_HEIGHT // 3 + 1
