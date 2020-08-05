@@ -111,4 +111,4 @@ if __name__ == "__main__":
     agent.save_weights(complete_path, overwrite=True)
 
     # Finally, evaluate our algorithm for 5 episodes.
-    agent.test(env, nb_episodes=5, visualize=True, verbose=0)
+    agent.test(env, nb_episodes=20, visualize=True, verbose=0)
