@@ -8,6 +8,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Activation, Flatten
 from tensorflow.keras.optimizers import Adam
 from termcolor import colored
+from collections import Counter
 from sys import stderr
 
 from rl.agents.dqn import DQNAgent
@@ -79,9 +80,32 @@ class EpisodeRewardsCallback(Callback):
         print(colored(f"max reward: {self.max_reward:.5f}", "red"), file=stderr)
 
 
+class ActionRecorderCallback(Callback):
+    episode_actions = []
+    TOTAL_ACTIONS = Counter()
+
+    def __init__(self):
+        self.episode_actions = []
+
+    def on_action_begin(self, action, logs={}):
+        self.episode_actions.append(action)
+
+    def on_episode_begin(self, episode, logs={}):
+        self.episode_actions = []
+
+    def on_episode_end(self, episode, logs={}):
+        ActionRecorderCallback.TOTAL_ACTIONS.update(Counter(self.episode_actions))
+        print(
+            colored(
+                f"actions:{sorted(ActionRecorderCallback.TOTAL_ACTIONS.items())}", "red"
+            ),
+            file=stderr,
+        )
+
+
 if __name__ == "__main__":
     version = "0007"
-    nb_steps = 100000
+    nb_steps = 10000
     env = gym.make("tetris_ai:tetris_gym-v0")
     base_folder = "nn_weights"
     filename = "dqn_{}_{}.h5f".format(env.spec.id, version)
@@ -103,6 +127,7 @@ if __name__ == "__main__":
             ResetEnvCallback(env),
             LogStepCallback(nb_steps),
             EpisodeRewardsCallback(),
+            ActionRecorderCallback(),
         ],
     )
 
