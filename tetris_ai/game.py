@@ -92,10 +92,13 @@ class Tetris:
     def break_lines(self):
         lines = 0
         self.score = 0
+        output = []
         # why does it start at 1?
         for i in range(1, self.height):
             zeros = 0
+            line = []
             for j in range(self.width):
+                line.append(str(self.field[i][j]) or " ")
                 if self.field[i][j] == 0:
                     zeros += 1
             if zeros == 0:
@@ -103,14 +106,10 @@ class Tetris:
                 for i1 in range(i, 1, -1):
                     for j in range(self.width):
                         self.field[i1][j] = self.field[i1 - 1][j]
+            output.append(line)
         if lines != 0:
             print(colored(f"IT'S A BINGO {lines}", "cyan"), file=stderr)
-            for i in range(self.height):
-                for j in range(self.width):
-                    value = " " if self.field[i][j] == 0 else "X"
-                    print(value, file=stderr, end='')
-                print("\n")
-            print(self.field, file=stderr)
+            print("\n".join([" ".join(x) for x in output]))
         self.score = lines
 
     def go_space(self):
