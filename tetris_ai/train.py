@@ -80,7 +80,7 @@ class EpisodeRewardsCallback(Callback):
 
 
 if __name__ == "__main__":
-    version = "0005"
+    version = "0007"
     nb_steps = 100000
     env = gym.make("tetris_ai:tetris_gym-v0")
     base_folder = "nn_weights"

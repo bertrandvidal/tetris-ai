@@ -21,6 +21,14 @@ class TetrisEnv(gym.Env):
     total_contiguous = 0
     reward = 0
     log_sampling = 25
+    ROTATE_WEIGHT = 2
+    LEFT_WEIGHT = 3
+    RIGHT_WEIGHT = 3
+    ACTIONS = (
+        [Actions.ROTATE] * ROTATE_WEIGHT
+        + [Actions.LEFT] * LEFT_WEIGHT
+        + [Actions.RIGHT] * RIGHT_WEIGHT
+    )
 
     def __init__(self):
         # observation_space is the tetris "screen", height x width of 0/1
@@ -31,20 +39,17 @@ class TetrisEnv(gym.Env):
             shape=(TetrisEnv.BOARD_HEIGHT, TetrisEnv.BOARD_WIDTH),
             dtype=np.uintc,
         )
-        self.action_space = spaces.Discrete(
-            max(
-                [
-                    action.value
-                    for action in Actions
-                    if action not in [Actions.QUIT, Actions.SPACE, Actions.DOWN]
-                ]
-            )
-            + 1
-        )
+        # action_space is the possible movements "downgraded" to a one
+        # dimensional space. Remove the ability to QUIT/DOWN/SPACE since we do
+        # not want the agent to chose those. We also skew the choice so ROTATE
+        # is less frequent than RIGHT/LEFT
+        self.action_space = spaces.Discrete(len(TetrisEnv.ACTIONS))
 
     def step(self, action):
         self.counter += 1
-        action_to_perform = Actions(action)
+        action_to_perform = Actions(TetrisEnv.ACTIONS[action])
+        # we actually get the reward from the previous action given that the
+        # one passed in isn't applied yet
         reward = self._reward()
         self.reward += reward
         if self.counter % self.log_sampling == 0:
@@ -55,8 +60,10 @@ class TetrisEnv(gym.Env):
                 ),
                 file=stderr,
             )
+        # game.figure is the piece that we control/that is going down
         if self.game.figure is None:
             self.game.new_figure()
+        # for each step we move one step downward
         self.game.go_down()
         self.applier.apply_actions([action_to_perform], self.game)
         return self._game_to_observation(), reward, self.game.is_done(), {}
