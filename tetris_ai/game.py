@@ -98,7 +98,7 @@ class Tetris:
             zeros = 0
             line = []
             for j in range(self.width):
-                line.append(str(self.field[i][j]) or " ")
+                line.append("X" if self.field[i][j] else " ")
                 if self.field[i][j] == 0:
                     zeros += 1
             if zeros == 0:
@@ -109,7 +109,7 @@ class Tetris:
             output.append(line)
         if lines != 0:
             print(colored(f"IT'S A BINGO {lines}", "cyan"), file=stderr)
-            print("\n".join([" ".join(x) for x in output]))
+            print("\n".join([" ".join(x) for x in output]), file=stderr)
         self.score = lines
 
     def go_space(self):
