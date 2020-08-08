@@ -22,12 +22,11 @@ class TetrisEnv(gym.Env):
     reward = 0
     log_sampling = 25
     ROTATE_WEIGHT = 2
-    LEFT_WEIGHT = 3
-    RIGHT_WEIGHT = 3
+    SIDE_WEIGHT = 4
     ACTIONS = (
         [Actions.ROTATE] * ROTATE_WEIGHT
-        + [Actions.LEFT] * LEFT_WEIGHT
-        + [Actions.RIGHT] * RIGHT_WEIGHT
+        + [Actions.LEFT] * SIDE_WEIGHT
+        + [Actions.RIGHT] * SIDE_WEIGHT
     )
 
     def __init__(self):

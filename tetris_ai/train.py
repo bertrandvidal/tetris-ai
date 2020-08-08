@@ -82,9 +82,11 @@ class EpisodeRewardsCallback(Callback):
 
 class ActionRecorderCallback(Callback):
     episode_actions = []
+    action_mapping = None
     TOTAL_ACTIONS = Counter()
 
-    def __init__(self):
+    def __init__(self, env):
+        self.action_mapping = env.ACTIONS
         self.episode_actions = []
 
     def on_action_begin(self, action, logs={}):
@@ -94,18 +96,19 @@ class ActionRecorderCallback(Callback):
         self.episode_actions = []
 
     def on_episode_end(self, episode, logs={}):
-        ActionRecorderCallback.TOTAL_ACTIONS.update(Counter(self.episode_actions))
+        ActionRecorderCallback.TOTAL_ACTIONS.update([Actions(self.action_mapping[a]) for a in
+                                                     self.episode_actions])
         print(
             colored(
-                f"actions:{sorted(ActionRecorderCallback.TOTAL_ACTIONS.items())}", "red"
+                f"actions:{ActionRecorderCallback.TOTAL_ACTIONS}", "red"
             ),
             file=stderr,
         )
 
 
 if __name__ == "__main__":
-    version = "0007"
-    nb_steps = 10000
+    version = "0008"
+    nb_steps = 1000000
     env = gym.make("tetris_ai:tetris_gym-v0")
     base_folder = "nn_weights"
     filename = "dqn_{}_{}.h5f".format(env.spec.id, version)
@@ -127,7 +130,7 @@ if __name__ == "__main__":
             ResetEnvCallback(env),
             LogStepCallback(nb_steps),
             EpisodeRewardsCallback(),
-            ActionRecorderCallback(),
+            ActionRecorderCallback(env),
         ],
     )
 
