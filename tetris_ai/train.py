@@ -96,12 +96,11 @@ class ActionRecorderCallback(Callback):
         self.episode_actions = []
 
     def on_episode_end(self, episode, logs={}):
-        ActionRecorderCallback.TOTAL_ACTIONS.update([Actions(self.action_mapping[a]) for a in
-                                                     self.episode_actions])
+        ActionRecorderCallback.TOTAL_ACTIONS.update(
+            [Actions(self.action_mapping[a]) for a in self.episode_actions]
+        )
         print(
-            colored(
-                f"actions:{ActionRecorderCallback.TOTAL_ACTIONS}", "red"
-            ),
+            colored(f"actions:{ActionRecorderCallback.TOTAL_ACTIONS}", "red"),
             file=stderr,
         )
 
