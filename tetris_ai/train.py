@@ -19,17 +19,15 @@ from rl.memory import SequentialMemory
 
 def get_agent(env):
     nb_actions = env.action_space.n
-    # I do not understand the following
     model = Sequential()
+    input_size = env.BOARD_HEIGHT * env.BOARD_WIDTH
     model.add(Flatten(input_shape=(1,) + env.observation_space.shape))
-    model.add(Dense(16))
-    model.add(Activation("relu"))
-    model.add(Dense(16))
-    model.add(Activation("relu"))
-    model.add(Dense(16))
-    model.add(Activation("relu"))
-    model.add(Dense(nb_actions))
-    model.add(Activation("linear"))
+
+    model.add(Dense(input_size, activation="relu"))
+    model.add(Dense(input_size, activation="relu"))
+    model.add(Dense(input_size, activation="relu"))
+
+    model.add(Dense(nb_actions, activation="linear"))
     print(model.summary())
 
     # still not understanding that part
@@ -106,8 +104,8 @@ class ActionRecorderCallback(Callback):
 
 
 if __name__ == "__main__":
-    version = "0008"
-    nb_steps = 1000000
+    version = "0009"
+    nb_steps = 100000
     env = gym.make("tetris_ai:tetris_gym-v0")
     base_folder = "nn_weights"
     filename = "dqn_{}_{}.h5f".format(env.spec.id, version)
@@ -138,4 +136,10 @@ if __name__ == "__main__":
     agent.save_weights(complete_path, overwrite=True)
 
     # Finally, evaluate our algorithm for 5 episodes.
-    agent.test(env, nb_episodes=20, visualize=True, verbose=0)
+    agent.test(
+        env,
+        nb_episodes=10,
+        visualize=True,
+        verbose=0,
+        callbacks=[EpisodeRewardsCallback(), ActionRecorderCallback(env)],
+    )

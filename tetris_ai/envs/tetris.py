@@ -99,7 +99,7 @@ class TetrisEnv(gym.Env):
         return observation
 
     def _reward(self):
-        rows_cleared = self.game.score
+        rows_cleared = 2 if self.game.score else 0
         positive, negative = self._get_occupied_area_rewards()
         low_rows = self._get_low_rows_rewards()
         if self.counter % self.log_sampling == 0:
