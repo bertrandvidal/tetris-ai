@@ -99,7 +99,7 @@ class TetrisEnv(gym.Env):
         return observation
 
     def _reward(self):
-        rows_cleared = 2 if self.game.score else 0
+        rows_cleared = self.game.score
         positive, negative = self._get_occupied_area_rewards()
         low_rows = self._get_low_rows_rewards()
         if self.counter % self.log_sampling == 0:
@@ -110,7 +110,7 @@ class TetrisEnv(gym.Env):
                 ),
                 file=stderr,
             )
-        return rows_cleared + positive + negative
+        return rows_cleared + positive + negative + low_rows
 
     def _get_low_rows_rewards(self):
         """For low rows, find the longest continuous segment of tetris, express
