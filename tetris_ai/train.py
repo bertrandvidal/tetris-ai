@@ -44,7 +44,7 @@ def get_agent(env):
         policy=policy,
     )
     dqn.compile(Adam(lr=0.1), metrics=["mae"])
-    return dqn
+    return dqn, model
 
 
 class ResetEnvCallback(Callback):
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     complete_path = os.path.abspath(os.path.join(base_folder, filename))
     np.random.seed(123)
     env.seed(123)
-    agent = get_agent(env)
+    agent, model = get_agent(env)
 
     if any(path.startswith(filename) for path in os.listdir(base_folder)):
         # load existing weights
