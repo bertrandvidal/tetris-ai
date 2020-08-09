@@ -14,8 +14,5 @@ if __name__ == "__main__":
         nb_episodes=20,
         visualize=True,
         verbose=0,
-        callbacks=[
-            EpisodeRewardsCallback(),
-            ActionRecorderCallback(env),
-        ],
+        callbacks=[EpisodeRewardsCallback(), ActionRecorderCallback(env),],
     )
